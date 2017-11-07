@@ -1,0 +1,18 @@
+img.img-gallery {
+  float: right;
+  max-height: 100px;
+  max-height: 100px;
+  width: auto; /* you can use % */
+  height: auto;
+}
+span.txt-gallery {
+	height: 100px;
+	line-height: 100px;
+	white-space: nowrap;
+}
+.main-background {
+  background-color: #ffeeff;
+}
+[hidden] {
+  display: none !important;
+}
