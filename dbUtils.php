@@ -46,7 +46,12 @@ function destroyLink(&$link) {
     $link = null;
 }
 
-function addFile($name, $data, $directory_id = 1, $type = "p") {
+function addFile($name, $data, $directory_id = "1", $type = "p") {
+
+    $name = makeQueryStringSafe($name);
+    $directory_id = makeQueryStringSafe($directory_id);
+    $type = makeQueryStringSafe($type);
+
     $link = createLink();
     $query = "INSERT INTO file (name,data,directory_id,type) VALUES ('" . mysqli_real_escape_string($link, $name) . "','" .
     mysqli_real_escape_string($link, $data) . "','" . $directory_id . "','" .$type . "');";
@@ -58,7 +63,8 @@ function addFile($name, $data, $directory_id = 1, $type = "p") {
 }
 
 function getImage($id) {
-
+    $id = makeQueryStringSafe($id);
+ 
     $link = createLink();
     $query = "SELECT data FROM file WHERE id=$id";
     $result = $link->query($query);
@@ -68,9 +74,10 @@ function getImage($id) {
 }
 
 function isUserValid($login, $password) {
-
-    $link = createLink();
-    $query = "SELECT name FROM user_account WHERE name='$login' AND password='$password';";
+    $login = makeQueryStringSafe($login);
+    $password = makeQueryStringSafe($password);
+    $link = createLink();    
+    $query = "SELECT name FROM user_account WHERE name='$login' AND password='$password';";    
     $result = $link->query($query);
     $loggedUser = $result->fetch_array();
     destroyLink($link);
@@ -83,8 +90,8 @@ function isUserValid($login, $password) {
 }
 
 function getUserId($name) {
-
-    $link = createLink();
+    $name = makeQueryStringSafe($name);
+    $link = createLink();    
     $query = "SELECT id FROM user_account WHERE name='$name'";
     $result = $link->query($query);
     $userId = $result->fetch_array();
@@ -125,7 +132,8 @@ function getUserId($name) {
 // }
 
 function addUser($name, $password) {
-
+    $name = makeQueryStringSafe($name);
+    $password = makeQueryStringSafe($password);
     $response = 200;
 
     $link = createLink();
@@ -159,7 +167,9 @@ function addUser($name, $password) {
 }
 
 function createUser($userName, $password, $userHomeGroupId) {
-
+    $userName = makeQueryStringSafe($userName);
+    $password = makeQueryStringSafe($password);
+    $userHomeGroupId = makeQueryStringSafe($userHomeGroupId);
     $link = createLink();
     $query = "INSERT INTO `user_account` (`name`, `password`, `home_group_id`) VALUES ('$userName', '$password', '$userHomeGroupId');";
     $result = $link->query($query);
@@ -180,6 +190,8 @@ function createUser($userName, $password, $userHomeGroupId) {
 }
 
 function createUserHomeGroup($userName) {
+    
+    $userName = makeQueryStringSafe($userName);
     $groupName = $userName;
     for ($i=0; !isUserGroupNameAvailable($groupName); $i++) {
         $groupName = $userName . "_" . $i;
@@ -189,6 +201,9 @@ function createUserHomeGroup($userName) {
 }
 
 function addUserGroup($groupName, $userName) {
+    $groupName = makeQueryStringSafe($groupName);
+    $userName = makeQueryStringSafe($userName);
+
     $response = 200;
     if(!isUserGroupNameAvailable($groupName)) {
         $response = 400;
@@ -205,6 +220,8 @@ function addUserGroup($groupName, $userName) {
 
 }
 function createGroup($groupName) {
+    
+    $groupName = makeQueryStringSafe($groupName);
     $link = createLink();
     $query = "INSERT INTO `group` (`name`) VALUES ('$groupName');";
     $result = $link->query($query);
@@ -245,8 +262,10 @@ function createFolder($folderName) {
 }
 
 function linkGroupToUser($groupId, $userName) {
-    $userId = getUserId($userName);
 
+    $groupId = makeQueryStringSafe($groupId);
+    $userName = makeQueryStringSafe($userName);
+    $userId = getUserId($userName);
     $link = createLink();
     $query = "INSERT INTO `user_group` (`user_id`, `group_id`) VALUES ('$userId', '$groupId');";
     $result = $link->query($query);
@@ -258,6 +277,7 @@ function linkGroupToUser($groupId, $userName) {
 
 function isUserGroupNameAvailable($groupName) {
 
+    $groupName = makeQueryStringSafe($groupName);
     $link = createLink();
     $query = "SELECT name FROM `group` WHERE name='$groupName';";
     $result = $link->query($query);
@@ -272,6 +292,7 @@ function isUserGroupNameAvailable($groupName) {
 }
 function isUserNameAvailable($userName) {
 
+        $userName = makeQueryStringSafe($userName);
         $link = createLink();
         $query = "SELECT name from user_account where name=$groupName;";
         $result = $link->query($query);
@@ -282,6 +303,14 @@ function isUserNameAvailable($userName) {
             return false;
         }
         return true;
+}
+
+function makeQueryStringSafe($queryString) {
+    $queryString = stripslashes($queryString);
+    $queryString = htmlentities($queryString);
+    $queryString = strip_tags($queryString);
+    $queryString = mysql_real_escape_string($queryString);
+    return $queryString;
 }
 
 ?>
