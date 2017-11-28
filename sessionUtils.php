@@ -1,5 +1,25 @@
 <?php
-include '../dbUtils.php';
+include 'dbUtils.php';
+
+    $isUserLogged = startSession();
+
+    function startSession() {
+        session_start();
+        return isUserLogged();
+    }
+
+    function isUserLogged() {
+        if($_SESSION['login_user'] != null){
+            return true;
+        }
+        return false;
+    }    
+
+    function redirect($url, $statusCode = 303)
+    {
+       header('Location: ' . $url, true, $statusCode);
+       die();
+    }
 
     function logUserIn($name, $password) {        
         
@@ -9,7 +29,7 @@ include '../dbUtils.php';
             logOut();
         } else {
 
-            $isAuthenticated = isUserAuthenticated($name, $password);
+            $isAuthenticated = isUserValid($name, $password);
                 
             if ($isAuthenticated == true) {
                 $_SESSION['login_user'] = $name;
@@ -39,5 +59,7 @@ include '../dbUtils.php';
         }
         return $error;
     }
+
+
 
 ?>

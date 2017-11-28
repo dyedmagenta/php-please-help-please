@@ -1,5 +1,8 @@
 <?php
-	include 'dbUtils.php';
+	include 'sessionUtils.php';
+	if(!$isUserLogged){
+		redirect("login.php");
+	}
 
 	include 'header.php'; 
 	$activePage = "GALLERY";

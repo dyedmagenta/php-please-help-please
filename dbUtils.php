@@ -59,7 +59,7 @@ function getImage($id) {
     return $image;
 }
 
-function isUserAuthenticated($login, $password) {
+function isUserValid($login, $password) {
     
     $link = createLink();    
     $query = "SELECT name FROM user_account WHERE name='$login' AND password='$password';";    
