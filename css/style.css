@@ -17,9 +17,16 @@ span.txt-gallery {
   display: none !important;
 }
 
+.registerButton {
+  margin-top: 5%;
+  text-align: center;
+  width: 80%;
+  position: relative;
+}
 
 .centered {
     margin: 0 auto;
     text-align: center;
-    width: 800px;
+    width: 80%;
+    position: relative;
 }

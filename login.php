@@ -19,10 +19,15 @@
 								<span class='input-group-addon' id='sizing-addon2'>🔒</span>
 			          <input type='password' name='password' class='form-control' placeholder='Password' aria-describedby='sizing-addon2' required>
 								<span class='input-group-btn'>
-			        		<button class='btn btn-secondary'  type='submit'>Go!</button>
+			        		<button class='btn btn-primary'  type='submit'>Go!</button>
 			      		</span>
 			        </div>
 						</form>
+						<div class='registerButton'>
+							<span class='input-group-btn'>
+								<a button class='btn btn-primary' href='register.php'>Register new user</button></a>
+							</span>
+						</div>
 					</div>
       </div>
 			</div>";
