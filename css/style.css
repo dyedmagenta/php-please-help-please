@@ -16,3 +16,10 @@ span.txt-gallery {
 [hidden] {
   display: none !important;
 }
+
+
+.centered {
+    margin: 0 auto;
+    text-align: center;
+    width: 800px;
+}
