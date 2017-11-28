@@ -9,12 +9,16 @@
       <ul class="navbar-nav mr-auto">
         <?php
           if($activePage === "GALLERY"){
-            echo "<li class='nav-item'><a class='nav-link' href='index.php''>Home</a></li><li class='nav-item active'><a class='nav-link' href='gallery.php''>Gallery</a></li><li class='nav-item'><a class='nav-link' href='upload.php'>Upload File</a></li>";
-           } else if($activePage === "UPLOAD") {
-            echo "<li class='nav-item'><a class='nav-link' href='index.php''>Home</a></li><li class='nav-item'><a class='nav-link' href='gallery.php''>Gallery</a></li><li class='nav-item active'><a class='nav-link' href='upload.php'>Upload File</a></li>";
-           } else {
-            echo "<li class='nav-item active'><a class='nav-link' href='index.php''>Home</a></li><li class='nav-item'><a class='nav-link' href='gallery.php''>Gallery</a></li><li class='nav-item'><a class='nav-link' href='upload.php'>Upload File</a></li>";
-           }
+            echo "<li class='nav-item'><a class='nav-link' href='index.php'>Home</a></li><li class='nav-item active'><a class='nav-link' href='gallery.php'>Gallery</a></li><li class='nav-item'><a class='nav-link' href='cinema.php'>Cinema</a></li><li class='nav-item'><a class='nav-link' href='upload.php'>Upload File</a></li><li class='nav-item'><a class='nav-link' href='login.php'>Login</a></li>";
+          } else if($activePage === "UPLOAD") {
+            echo "<li class='nav-item'><a class='nav-link' href='index.php'>Home</a></li><li class='nav-item'><a class='nav-link' href='gallery.php'>Gallery</a></li><li class='nav-item'><a class='nav-link' href='cinema.php'>Cinema</a></li><li class='nav-item active'><a class='nav-link' href='upload.php'>Upload File</a></li><li class='nav-item'><a class='nav-link' href='login.php'>Login</a></li>";
+          } else if($activePage === "LOGIN") {
+            echo "<li class='nav-item'><a class='nav-link' href='index.php'>Home</a></li><li class='nav-item'><a class='nav-link' href='gallery.php'>Gallery</a></li><li class='nav-item'><a class='nav-link' href='cinema.php'>Cinema</a></li><li class='nav-item'><a class='nav-link' href='upload.php'>Upload File</a></li><li class='nav-item active'><a class='nav-link' href='login.php'>Login</a></li>";
+          } else if($activePage === "CINEMA") {
+            echo "<li class='nav-item'><a class='nav-link' href='index.php'>Home</a></li><li class='nav-item'><a class='nav-link' href='gallery.php'>Gallery</a></li><li class='nav-item active'><a class='nav-link' href='cinema.php'>Cinema</a></li><li class='nav-item'><a class='nav-link' href='upload.php'>Upload File</a></li><li class='nav-item'><a class='nav-link' href='login.php'>Login</a></li>";
+          } else {
+            echo "<li class='nav-item active'><a class='nav-link' href='index.php'>Home</a></li><li class='nav-item'><a class='nav-link' href='gallery.php'>Gallery</a></li><li class='nav-item'><a class='nav-link' href='cinema.php'>Cinema</a></li><li class='nav-item'><a class='nav-link' href='upload.php'>Upload File</a></li><li class='nav-item'><a class='nav-link' href='login.php'>Login</a></li>";
+          }
           
         ?>
       </ul>
