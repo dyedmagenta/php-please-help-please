@@ -121,21 +121,62 @@ function addUser($name, $password) {
     $response = 200;
 
     $link = createLink();
-    $query = "SELECT name from user_account where name=$name;";
+    $query = "SELECT `name` from user_account where `name` = '$name';";
     $result = $link->query($query);
+    if($result === false) {
+        echo mysqli_error($link);
+    }    
     $fetchedUser = $result->fetch_array();
     destroyLink($link);
     
     if($name == $fetchedUser[0]) {
         $response = 400;
+        echo "Username is taken!";
         return $response;
     }
 
-    $userHomeGroupId = addUserHomeGroup($name);
+    try {
+        $userHomeGroupId = createUserHomeGroup($name);
+        createUser($name, $password, $userHomeGroupId);
+        linkGroupToUser($userHomeGroupId, $name);
+    } catch (Exception $e){
+        $response = 400;
+        echo $e;
+        echo $e->getMessage();
+    }
+    
+
+    return $response;
 }
 
-function addUserHomeGroup($userName) {
+function createUser($userName, $password, $userHomeGroupId) {
+    
+    $link = createLink();
+    $query = "INSERT INTO `user_account` (`name`, `password`, `home_group_id`) VALUES ('$userName', '$password', '$userHomeGroupId');";
+    $result = $link->query($query);
+    destroyLink($link);
 
+    if($result === true) {
+        $link = createLink();
+        $query = "SELECT id FROM `user_account` WHERE name='$userName';";
+        $result = $link->query($query);
+        echo mysqli_error($link);
+        $fetchedUserId = $result->fetch_array();
+        destroyLink($link);
+
+        return $fetchedUserId[0];
+    } else {
+        throw new Exception("Creating User Error", 1);
+    } 
+}
+
+function createUserHomeGroup($userName) {
+    $groupName = $userName;
+    for ($i=0; !isUserGroupNameAvailable($groupName); $i++) {
+        $groupName = $userName . "_" . $i;
+        echo $groupName;
+    }
+    return createGroup($groupName);
 }
 
 function addUserGroup($groupName, $userName) {
