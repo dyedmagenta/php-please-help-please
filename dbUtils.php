@@ -3,7 +3,7 @@ function createLink() {
     $dbHost = "127.0.0.1";
     $dbPort = 3306;
     $dbLogin = "root";
-    $dbPassword = "";
+    $dbPassword = "root";
     $dbName = "media_db";
     return new mysqli($dbHost, $dbLogin, $dbPassword, $dbName);
 }
@@ -11,7 +11,7 @@ function createLink() {
 function getFileList() {
     $link = createLink();
     $result = $link->query("SELECT id, name, type FROM file;");
-    
+
     $files = array();
     while ($row = mysqli_fetch_assoc($result)) {
         $files[] = $row;
@@ -24,7 +24,7 @@ function getFileList() {
 function getMovieList() {
     $link = createLink();
     $result = $link->query("SELECT id, name, type FROM file WHERE type = 'f';");
-    
+
     $files = array();
     while ($row = mysqli_fetch_assoc($result)) {
         $files[] = $row;
@@ -34,13 +34,21 @@ function getMovieList() {
     return $files;
 }
 
+function getMovieFromId($id) {
+  $link = createLink();
+  $result = $link->query("SELECT id, name, type FROM file WHERE type = 'f' AND id = '$id';");
+  $movie = $result->fetch_assoc();
+  destroyLink($link);
+  return $movie;
+}
+
 function destroyLink(&$link) {
     $link = null;
 }
 
 function addFile($name, $data, $directory_id = 1, $type = "p") {
     $link = createLink();
-    $query = "INSERT INTO file (name,data,directory_id,type) VALUES ('" . mysqli_real_escape_string($link, $name) . "','" . 
+    $query = "INSERT INTO file (name,data,directory_id,type) VALUES ('" . mysqli_real_escape_string($link, $name) . "','" .
     mysqli_real_escape_string($link, $data) . "','" . $directory_id . "','" .$type . "');";
     $result = $link->query($query) or die($link->error);
 
@@ -50,7 +58,7 @@ function addFile($name, $data, $directory_id = 1, $type = "p") {
 }
 
 function getImage($id) {
- 
+
     $link = createLink();
     $query = "SELECT data FROM file WHERE id=$id";
     $result = $link->query($query);
@@ -60,9 +68,9 @@ function getImage($id) {
 }
 
 function isUserValid($login, $password) {
-    
-    $link = createLink();    
-    $query = "SELECT name FROM user_account WHERE name='$login' AND password='$password';";    
+
+    $link = createLink();
+    $query = "SELECT name FROM user_account WHERE name='$login' AND password='$password';";
     $result = $link->query($query);
     $loggedUser = $result->fetch_array();
     destroyLink($link);
@@ -75,8 +83,8 @@ function isUserValid($login, $password) {
 }
 
 function getUserId($name) {
-    
-    $link = createLink();    
+
+    $link = createLink();
     $query = "SELECT id FROM user_account WHERE name='$name'";
     $result = $link->query($query);
     $userId = $result->fetch_array();
@@ -86,13 +94,13 @@ function getUserId($name) {
 }
 
 // function getUserGroups($name) {
-    
+
 //     $userId = getUserId($name);
 
 //     $link = createLink();
-//     $query = "SELECT id, 'name' from group 
+//     $query = "SELECT id, 'name' from group
 //     inner join user_group on user_group.group_id=group.id where user_group.user_id=" + $userId + ";";
-    
+
 //     $result = $link->query($query);
 //     $userGroups = $result->fetch_assoc();
 //     destroyLink($link);
@@ -101,7 +109,7 @@ function getUserId($name) {
 // }
 
 // function isUserInGroup($name, $groupId) {
-    
+
 //     $userId = getUserId($name);
 
 //     $link = createLink();
@@ -125,10 +133,10 @@ function addUser($name, $password) {
     $result = $link->query($query);
     if($result === false) {
         echo mysqli_error($link);
-    }    
+    }
     $fetchedUser = $result->fetch_array();
     destroyLink($link);
-    
+
     if($name == $fetchedUser[0]) {
         $response = 400;
         echo "Username is taken!";
@@ -138,19 +146,20 @@ function addUser($name, $password) {
     try {
         $userHomeGroupId = createUserHomeGroup($name);
         createUser($name, $password, $userHomeGroupId);
+        createFolder($userHomeGroupId);
         linkGroupToUser($userHomeGroupId, $name);
     } catch (Exception $e){
         $response = 400;
         echo $e;
         echo $e->getMessage();
     }
-    
+
 
     return $response;
 }
 
 function createUser($userName, $password, $userHomeGroupId) {
-    
+
     $link = createLink();
     $query = "INSERT INTO `user_account` (`name`, `password`, `home_group_id`) VALUES ('$userName', '$password', '$userHomeGroupId');";
     $result = $link->query($query);
@@ -167,7 +176,7 @@ function createUser($userName, $password, $userHomeGroupId) {
         return $fetchedUserId[0];
     } else {
         throw new Exception("Creating User Error", 1);
-    } 
+    }
 }
 
 function createUserHomeGroup($userName) {
@@ -190,17 +199,17 @@ function addUserGroup($groupName, $userName) {
         } catch(Exception $e) {
             $response = 400;
             echo $e->getMessage();
-        }        
+        }
     }
     return $response;
-    
+
 }
 function createGroup($groupName) {
     $link = createLink();
     $query = "INSERT INTO `group` (`name`) VALUES ('$groupName');";
     $result = $link->query($query);
     destroyLink($link);
-    
+
     if($result === true) {
         $link = createLink();
         $query = "SELECT id FROM `group` WHERE name='$groupName';";
@@ -212,19 +221,39 @@ function createGroup($groupName) {
         return $fetchedGroupId[0];
     } else {
         throw new Exception("Creating Group Error", 1);
-    }    
+    }
+}
+
+function createFolder($folderName) {
+  $link = createLink();
+  $query = "INSERT INTO `directory` (`name`) VALUES ('$folderName');";
+  $result = $link->query($query);
+  destroyLink($link);
+
+  if($result === true) {
+      $link = createLink();
+      $query = "SELECT id FROM `folder` WHERE name='$folderName';";
+      $result = $link->query($query);
+      echo mysqli_error($link);
+      $fetchedFolderId = $result->fetch_array();
+      destroyLink($link);
+
+      return $fetchedFolderId[0];
+  } else {
+      throw new Exception("Creating Folder Error", 1);
+  }
 }
 
 function linkGroupToUser($groupId, $userName) {
     $userId = getUserId($userName);
-    
+
     $link = createLink();
     $query = "INSERT INTO `user_group` (`user_id`, `group_id`) VALUES ('$userId', '$groupId');";
     $result = $link->query($query);
     destroyLink($link);
     if($result === false) {
         throw new Exception("Linking group to user error", 1);
-    }    
+    }
 }
 
 function isUserGroupNameAvailable($groupName) {
@@ -232,17 +261,17 @@ function isUserGroupNameAvailable($groupName) {
     $link = createLink();
     $query = "SELECT name FROM `group` WHERE name='$groupName';";
     $result = $link->query($query);
-    
+
     $fetchedGroupNames = $result->fetch_array();
     destroyLink($link);
 
     if($groupName == $fetchedGroupNames[0]) {
         return false;
-    } 
+    }
     return true;
 }
 function isUserNameAvailable($userName) {
-    
+
         $link = createLink();
         $query = "SELECT name from user_account where name=$groupName;";
         $result = $link->query($query);
@@ -251,7 +280,7 @@ function isUserNameAvailable($userName) {
 
         if($userName == $fetchedUserNames[0]) {
             return false;
-        } 
+        }
         return true;
 }
 
