@@ -5,4 +5,5 @@
     $password = $_POST['password'];
     $response = logUserIn($username, $password);
     http_response_code($response);
+    redirect("/index.php")
 ?>

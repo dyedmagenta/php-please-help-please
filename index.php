@@ -1,5 +1,6 @@
-<?php 
-	include 'header.php'; 
+<?php
+	include 'sessionUtils.php';
+	include 'header.php';
 	$activePage = "HOME";
 	include 'navbar.php';
 	include 'homeContent.php';
