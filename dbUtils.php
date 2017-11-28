@@ -232,7 +232,7 @@ function createFolder($folderName) {
 
   if($result === true) {
       $link = createLink();
-      $query = "SELECT id FROM `folder` WHERE name='$folderName';";
+      $query = "SELECT id FROM `directory` WHERE name='$folderName';";
       $result = $link->query($query);
       echo mysqli_error($link);
       $fetchedFolderId = $result->fetch_array();
